@@ -30,11 +30,16 @@ class Model:
     def __init__(self):
         self.tj = None
         self.pcd =None
+        self.tiepoint = None
         self.__vis = None
     
-    def read_model(self, xml_path, pcd_path):
-        self.tj = read_xml(input_xml=xml_path)
-        self.pcd = laspy.read(pcd_path)
+    def read_model(self, xml_path, pcd_path=None):
+        results = read_xml(input_xml=xml_path)
+        self.tj = results['photo_results']
+        if 'points_results' in results:
+            self.tiepoint = results['points_results']
+        if pcd_path is not None:
+            self.pcd = laspy.read(pcd_path)
         
     def add_pcd(self, remove_statistical_outlier=False):
         pcd = open3d.geometry.PointCloud()
@@ -61,6 +66,16 @@ class Model:
         self.__vis.poll_events()
         self.__vis.update_renderer()
     
+    def add_tiepoint(self):
+        pcd = open3d.geometry.PointCloud()
+            
+        pcd.points = open3d.utility.Vector3dVector(self.tiepoint.points)
+        pcd.colors = open3d.utility.Vector3dVector(self.tiepoint.colors / 255.)
+            
+        self.__vis.add_geometry(pcd)
+        self.__vis.poll_events()
+        self.__vis.update_renderer()
+        
     def fetchPly(self, path):
         plydata = PlyData.read(path)
         vertices = plydata['vertex']
@@ -231,11 +246,10 @@ def parse_args():
         "--input_xml", help="path to cc xml", default='shizi.xml'
     )
     parser.add_argument(
-        "--input_pcd", help="path to point cloud (format:las)", default='shizi.las'
+        "--input_pcd", help="path to point cloud (format:las)", default=None
     )
     args = parser.parse_args()
     return args
-
 
 def main():
     args = parse_args()
@@ -244,12 +258,18 @@ def main():
     model = Model()
     model.read_model(args.input_xml, args.input_pcd)
     print("num_cameras:", len(model.tj.keys()))
-    print("num_pcd:", len(model.pcd))
+    if model.pcd is not None:
+        print("num_pcd:", len(model.pcd))
+    if model.tiepoint is not None:
+        print("num_tiepoint:", len(model.tiepoint.points))
 
     # display using Open3D visualization tools
     model.create_window()
     model.add_cameras(scale=0.25)
-    model.add_pcd()
+    if model.pcd is not None:
+        model.add_pcd()
+    if model.tiepoint is not None:
+        model.add_tiepoint()
     model.show()
 
 

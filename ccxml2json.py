@@ -5,7 +5,7 @@ import imageio
 import numpy as np
 import torch
 # from utils import auto_orient_and_center_poses
-from read_xml import read_xml
+from read_xml import read_xml, storePly
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -60,7 +60,8 @@ if __name__ == "__main__":
     OUTPUT_PATH = INPUT_PATH
     DOWNSAMPLE = args.downsample
     TRAIN_SKIP = args.train_skip
-    tj = read_xml(input_xml=INPUT_XML) 
+    results = read_xml(input_xml=INPUT_XML) 
+    tj = results['photo_results']
 
     # with open(os.path.join(INPUT_PATH,f"{args.input_transforms}"), "r") as f:
     #     tj = json.load(f)
@@ -254,6 +255,10 @@ if __name__ == "__main__":
     with open(os.path.join(OUTPUT_PATH, args.output_transforms),"w") as outfile:
         json.dump(transforms, outfile, indent=2)
     
+    if 'points_results' in results:
+        points = results['points_results']
+        storePly(os.path.join(OUTPUT_PATH, 'inputs.ply'), points.points , points.colors)
+        
     # with open(os.path.join(INPUT_PATH, 'transforms_train_pca.json'),"w") as outfile:
     #     json.dump(train_json, outfile, indent=2)
     # with open(os.path.join(INPUT_PATH, 'transforms_test_pca.json'),"w") as outfile:
