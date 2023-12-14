@@ -1,0 +1,3 @@
+python ccxml2json.py --input_path data/deyilou/project/outdoor/noon/ --input_xml XML/noon.xml --output_transforms noon.json --is_depth
+python ccxml2json.py --input_path data/deyilou/project/outdoor/noon/ --input_xml XML/noon.xml --output_transforms noon_4.json --downsample 4 --is_depth
+python downsample.py --input_path data/deyilou/project/outdoor/noon/ --input_xml XML/noon.xml --downsample  4 --is_depth

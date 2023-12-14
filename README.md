@@ -1,4 +1,47 @@
-# Preprocessing NeRF Json
+# Preprocessing NeRF Data
+
+The structure of the data:
+
+1. only images & images + tiepoints (in cc xml)
+    ```
+   ├── images 
+   │   ├── img_1
+   │   └── img_2
+   ├── images_5 # downsample 5*
+   │   ├── img_1
+   │   └── img_1
+   ├── xml
+   └── json
+   ```
+
+2. images + las
+    ```
+   ├── images 
+   │   ├── img_1
+   │   └── img_2
+   ├── images_5 # downsample 5*
+   │   └── ...
+   ├── LAS 
+   │   └── las
+   ├── xml
+   └── json
+   ```
+
+3. images + depth
+    ```
+   ├── images 
+   │   ├── rgb
+   │   │   ├── img_1
+   │   │   ├── img_2
+   │   └── depth
+   │   │   ├── img_1
+   │   │   ├── img_2
+   ├── images_5 # downsample 5*
+   │   ├── ...
+   ├── xml
+   └── json
+   ```
+
 
 ## read_xml.py
 
@@ -52,9 +95,9 @@ orient_and_center_poses function: "pca", "up", "vertical", "none"
 
 ## visualize.py
 
-Visualize camera pose & point clouds
+Visualize camera pose & point clouds. Here is an example (deyilou/outdoor/am)
 
 camera: Opencv coordinate
 
-
+<center class="half">    <img src="assets/am_las_pose.png" width="80%"/></center>
 

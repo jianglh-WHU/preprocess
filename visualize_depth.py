@@ -73,7 +73,7 @@ def exr_to_jpg_greyscale(exr_file, jpg_file):
 
 
 def main():
-    files = glob.glob('data/deyilou/project/outdoor/am/depth/*.exr')
+    files = glob.glob('data/deyilou/project/outdoor/am/images_4/depth/*.exr')
     savepath = '.'
     for file in files:
         filename,file_ext = os.path.splitext(file)
