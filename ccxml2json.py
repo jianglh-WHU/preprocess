@@ -248,8 +248,14 @@ if __name__ == "__main__":
                 'transform_matrix':c2w.tolist(),
                 }
             if args.is_depth:
-                frame_dict['depth_path'] = os.path.join(f'{suffix}','detph',file_path+'.depth.exr')
-                frame_dict['file_path'] = os.path.join(f'{suffix}','rgb',file_path)
+                depth_path = os.path.join(f'{suffix}','depth',file_path+'.depth.exr')
+                if os.path.exists(os.path.join(INPUT_PATH,depth_path)):
+                    frame_dict['depth_path'] = depth_path
+                # import pdb;pdb.set_trace()
+                if 'indoor' in OUTPUT_PATH:
+                    frame_dict['file_path'] = os.path.join(f'{suffix}','rgb','JPG',file_path)
+                else:
+                    frame_dict['file_path'] = os.path.join(f'{suffix}','rgb',file_path)
             all_frames.append(frame_dict)
             # import pdb; pdb.set_trace()
 

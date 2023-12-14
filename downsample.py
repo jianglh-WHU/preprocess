@@ -138,12 +138,20 @@ if __name__ == "__main__":
         
         if args.is_depth:
             if 'images' in frame['path']:
-                file_path = os.path.join(INPUT_PATH,'rgb',frame['path'])
                 depth_path = os.path.join(INPUT_PATH,'depth',frame['path'])
+                if 'indoor' in INPUT_PATH:
+                    file_path = os.path.join(INPUT_PATH,'rgb','JPG',frame['path'])
+                else:
+                    file_path = os.path.join(INPUT_PATH,'rgb',frame['path'])
             else:
-                file_path = os.path.join(INPUT_PATH,'images','rgb',frame['path'])
                 depth_path = os.path.join(INPUT_PATH,'images','depth',frame['path']+'.depth.exr')
+                if 'indoor' in INPUT_PATH:
+                    file_path = os.path.join(INPUT_PATH,'images','rgb','JPG',frame['path'])
+                else:
+                    file_path = os.path.join(INPUT_PATH,'images','rgb',frame['path'])
             tasks.append((file_path,w,h,DOWNSAMPLE))
+            if not os.path.exists(depth_path):
+                continue
             depth_tasks.append((depth_path,w,h,DOWNSAMPLE))
     # import pdb;pdb.set_trace()
     
