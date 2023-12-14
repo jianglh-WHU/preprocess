@@ -28,19 +28,40 @@ The structure of the data:
    ```
 
 3. images + depth
-    ```
-   ├── images 
-   │   ├── rgb
-   │   │   ├── img_1
-   │   │   ├── img_2
-   │   └── depth
-   │   │   ├── img_1
-   │   │   ├── img_2
-   ├── images_5 # downsample 5*
-   │   ├── ...
-   ├── xml
-   └── json
-   ```
+
+   + outdoor
+
+     ```
+     ├── images 
+     │   ├── rgb
+     │   │   ├── img_1
+     │   │   ├── img_2
+     │   └── depth
+     │   │   ├── img_1
+     │   │   ├── img_2
+     ├── images_5 # downsample 5*
+     │   ├── ...
+     ├── xml
+     └── json
+     ```
+
+   + indoor
+
+     ```
+     ├── images 
+     │   ├── rgb
+     │   │   ├── ARW
+     │   │   ├── JPG
+     │   │   │   ├── img_1
+     │   │   │   ├── img_2
+     │   └── depth
+     │   │   ├── img_1
+     │   │   ├── img_2
+     ├── images_5 # downsample 5*
+     │   ├── ...
+     ├── xml
+     └── json
+     ```
 
 
 ## read_xml.py
