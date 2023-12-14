@@ -30,6 +30,8 @@ def parse_args():
                         default='shizi.json')
     
     parser.add_argument("--same_intri",action='store_true', default=False)
+    
+    parser.add_argument("--is_depth",action='store_true', default=False)
 
     parser.add_argument("--downsample", type=int, default=1)
     
@@ -60,7 +62,7 @@ if __name__ == "__main__":
     OUTPUT_PATH = INPUT_PATH
     DOWNSAMPLE = args.downsample
     TRAIN_SKIP = args.train_skip
-    results = read_xml(input_xml=INPUT_XML) 
+    results = read_xml(input_xml=os.path.join(INPUT_PATH,INPUT_XML))
     tj = results['photo_results']
 
     # with open(os.path.join(INPUT_PATH,f"{args.input_transforms}"), "r") as f:
@@ -232,7 +234,7 @@ if __name__ == "__main__":
             cy = h / 2 
             
             suffix = 'images' if DOWNSAMPLE==1 else f'images_{DOWNSAMPLE}'
-            file_path = os.path.join(f'{suffix}',file_path)
+            rgb_path = os.path.join(f'{suffix}',file_path)
             c2w = np.concatenate((c2ws[i],np.array([[0,0,0,1]])),axis=0)
             frame_dict = {
                 'fl_x':fl_x,
@@ -241,9 +243,13 @@ if __name__ == "__main__":
                 'cy':cy,
                 'w':w,
                 'h':h,
-                'file_path':file_path,
+                'file_path':rgb_path,
+                'depth_path':[],
                 'transform_matrix':c2w.tolist(),
                 }
+            if args.is_depth:
+                frame_dict['depth_path'] = os.path.join(f'{suffix}','detph',file_path+'.depth.exr')
+                frame_dict['file_path'] = os.path.join(f'{suffix}','rgb',file_path)
             all_frames.append(frame_dict)
             # import pdb; pdb.set_trace()
 
@@ -257,7 +263,7 @@ if __name__ == "__main__":
     
     if 'points_results' in results:
         points = results['points_results']
-        storePly(os.path.join(OUTPUT_PATH, 'inputs.ply'), points.points , points.colors)
+        storePly(os.path.join(OUTPUT_PATH, 'points3d.ply'), points.points , points.colors)
         
     # with open(os.path.join(INPUT_PATH, 'transforms_train_pca.json'),"w") as outfile:
     #     json.dump(train_json, outfile, indent=2)

@@ -144,7 +144,7 @@ def read_xml(input_xml):
         for photo in tqdm(photo_subgroup):
 
             id = int(photo.getElementsByTagName('Id')[0].firstChild.data)
-            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')[-3:]
+            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')[2:]
             # path = path[0] + '/' + path[1] + '/' + path[2]
             path = os.path.join(*path)
 
@@ -194,7 +194,7 @@ def read_xml(input_xml):
     results['photo_results'] = photo_results
     # pdb.set_trace()
     tiepoints = infos.getElementsByTagName("Tiepoints") 
-    if len(tiepoints) < 0:
+    if len(tiepoints) == 0:
         return results
     tiepoint = doc.getElementsByTagName("TiePoint")
 
