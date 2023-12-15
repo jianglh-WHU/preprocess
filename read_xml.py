@@ -144,7 +144,7 @@ def read_xml(input_xml):
         for photo in tqdm(photo_subgroup):
 
             id = int(photo.getElementsByTagName('Id')[0].firstChild.data)
-            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')[2:]
+            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')[1:]
             # path = path[0] + '/' + path[1] + '/' + path[2]
             path = os.path.join(*path)
 
@@ -193,7 +193,7 @@ def read_xml(input_xml):
             photo_results[id] = {'path': path, 'rot_mat': c2w.tolist()}
     results['photo_results'] = photo_results
     # pdb.set_trace()
-    tiepoints = infos.getElementsByTagName("Tiepoints") 
+    tiepoints = infos.getElementsByTagName("Tiepoints") or infos.getElementsByTagName("TiePoints") 
     if len(tiepoints) == 0:
         return results
     tiepoint = doc.getElementsByTagName("TiePoint")
