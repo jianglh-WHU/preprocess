@@ -1,6 +1,7 @@
 from PIL import Image
 import os
 import json
+from downsample_utils import get_tasks_json, get_tasks_xml
 import mmcv
 import OpenEXR
 import Imath
@@ -24,6 +25,10 @@ def parse_args():
     parser.add_argument("--input_xml",
                         type=str,
                         default='shizi.xml')
+    parser.add_argument("--input_csv",
+                        type=str,
+                        default='zao.csv')
+    parser.add_argument("--type",type=str,choices=['xml','json'])
     parser.add_argument("--is_depth",
                         action='store_true',
                         default=False)
@@ -108,52 +113,14 @@ if __name__ == "__main__":
     DOWNSAMPLE = args.downsample
     INPUT_XML = args.input_xml
     
-    results = read_xml(input_xml=os.path.join(INPUT_PATH,INPUT_XML))
-    tj = results['photo_results']
-    # with open(os.path.join(INPUT_PATH,f"{args.input_transforms}"), "r") as f:
-    #     tj = json.load(f)
-    # import pdb;pdb.set_trace()
     os.makedirs(os.path.join(OUTPUT_PATH,f"images_{DOWNSAMPLE}"),exist_ok=True)
-
-    keys = tj.keys()
     traverse_mkdir_folder(INPUT_PATH,OUTPUT_PATH,DOWNSAMPLE)
+
+    if args.type=='json':
+        tasks,depth_tasks=get_tasks_json(INPUT_PATH, INPUT_XML, DOWNSAMPLE, args)
     
-    tasks=[]
-    depth_tasks=[]
-    for key in keys:
-        frame = tj[key]
-        # if "tiejin" not in frame['path']:
-            # continue
-        # if "huanrao" not in frame['path']:
-            # continue
-        rot_mat =np.array(frame["rot_mat"])
-        w = rot_mat[1,-1]
-        h = rot_mat[0,-1]
-        if not args.is_depth:
-            if 'images' in frame['path']:
-                file_path = os.path.join(INPUT_PATH,frame['path'])
-            else:
-                file_path = os.path.join(INPUT_PATH,'images',frame['path'])
-            tasks.append((file_path,w,h,DOWNSAMPLE))
-        
-        if args.is_depth:
-            if 'images' in frame['path']:
-                depth_path = os.path.join(INPUT_PATH,'depth',frame['path'])
-                if 'indoor' in INPUT_PATH:
-                    file_path = os.path.join(INPUT_PATH,'rgb','JPG',frame['path'])
-                else:
-                    file_path = os.path.join(INPUT_PATH,'rgb',frame['path'])
-            else:
-                depth_path = os.path.join(INPUT_PATH,'images','depth',frame['path']+'.depth.exr')
-                if 'indoor' in INPUT_PATH:
-                    file_path = os.path.join(INPUT_PATH,'images','rgb','JPG',frame['path'])
-                else:
-                    file_path = os.path.join(INPUT_PATH,'images','rgb',frame['path'])
-            tasks.append((file_path,w,h,DOWNSAMPLE))
-            if not os.path.exists(depth_path):
-                continue
-            depth_tasks.append((depth_path,w,h,DOWNSAMPLE))
-    # import pdb;pdb.set_trace()
+    elif args.type=='xml':
+        tasks,depth_tasks=get_tasks_xml(INPUT_PATH, INPUT_XML, DOWNSAMPLE, args)
     
     mmcv.track_parallel_progress(downsample,tasks,nproc=64)
     if args.is_depth:
