@@ -13,9 +13,9 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="downsample images")
 
-    # parser.add_argument("--output_path",
-    #                     type=str,
-    #                     default='china_museum')
+    parser.add_argument("--json_path",
+                        type=str,
+                        default=None)
     parser.add_argument("--input_path",
                         type=str,
                         default='sh_city/3')
@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--input_csv",
                         type=str,
                         default='zao.csv')
-    parser.add_argument("--type",type=str,choices=['xml','json'])
+    parser.add_argument("--type",type=str,choices=['xml','json','all'])
     parser.add_argument("--is_depth",
                         action='store_true',
                         default=False)
@@ -39,7 +39,6 @@ def parse_args():
     return args
 
 def downsample(tasks):
-    
     img_path,w,h,reso = tasks
     index = img_path.find('images/')
     img_name = img_path[index+len('images/'):]
@@ -52,7 +51,6 @@ def downsample(tasks):
 
     im_resize = img.resize(img_wh, resample=Image.LANCZOS)
     img_path=os.path.join(input_path, f'images_{reso}',img_name)
-
     im_resize.save(img_path)
 
 def downsample_depth(tasks):
@@ -117,11 +115,11 @@ if __name__ == "__main__":
     traverse_mkdir_folder(INPUT_PATH,OUTPUT_PATH,DOWNSAMPLE)
 
     if args.type=='json':
-        tasks,depth_tasks=get_tasks_json(INPUT_PATH, INPUT_XML, DOWNSAMPLE, args)
+        tasks,depth_tasks=get_tasks_json(INPUT_PATH, DOWNSAMPLE, args)
     
     elif args.type=='xml':
         tasks,depth_tasks=get_tasks_xml(INPUT_PATH, INPUT_XML, DOWNSAMPLE, args)
-    
+
     mmcv.track_parallel_progress(downsample,tasks,nproc=64)
     if args.is_depth:
         mmcv.track_parallel_progress(downsample_depth,depth_tasks,nproc=64)
