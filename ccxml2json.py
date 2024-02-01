@@ -27,7 +27,7 @@ def parse_args():
     
     parser.add_argument("--output_transforms",
                         type=str,
-                        default='shizi.json')
+                        default='transforms.json')
     
     parser.add_argument("--same_intri",action='store_true', default=False)
     
@@ -261,7 +261,6 @@ if __name__ == "__main__":
 
         for i,frame in enumerate(all_frames):
             transforms['frames'].append(frame)
-        
             
     #TODO: save
     with open(os.path.join(OUTPUT_PATH, args.output_transforms),"w") as outfile:

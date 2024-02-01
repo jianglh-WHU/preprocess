@@ -8,3 +8,4 @@ scripts/run.sh
 *.json
 *.las
 resize.py
+scripts/*

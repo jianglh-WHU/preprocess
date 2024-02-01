@@ -68,9 +68,9 @@ def get_tasks_json(input_path, downsample, args):
             try:
                 # if already have been ds 
                 Image.open(file_path)
-                continue
             except:
-                tasks.append((file_path,w,h,downsample))
+                continue
+            tasks.append((file_path,w,h,downsample))
             
         if args.is_depth:
             if 'images' in frame['file_path']:
@@ -84,6 +84,7 @@ def get_tasks_json(input_path, downsample, args):
                 continue
             depth_tasks.append((depth_path,w,h,downsample))
     # import pdb;pdb.set_trace()
+   
     return tasks, depth_tasks
 
 def get_tasks_all(input_path, downsample, args):

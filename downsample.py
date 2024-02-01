@@ -119,7 +119,7 @@ if __name__ == "__main__":
     
     elif args.type=='xml':
         tasks,depth_tasks=get_tasks_xml(INPUT_PATH, INPUT_XML, DOWNSAMPLE, args)
-
+        
     mmcv.track_parallel_progress(downsample,tasks,nproc=64)
     if args.is_depth:
         mmcv.track_parallel_progress(downsample_depth,depth_tasks,nproc=64)
