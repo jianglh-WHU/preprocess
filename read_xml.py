@@ -96,11 +96,11 @@ def parse_args():
     return args
 
 
-def read_xml(input_xml):
+def read_xml(input_xml,input_path):
     doc = minidom.parse(input_xml)
 
     infos = doc.getElementsByTagName("Block")[0]
-    # photos = photos.getElementsByTagName("Photogroups")[0]
+    # photos = infos.getElementsByTagName("Photogroups")[0]
     photos = infos.getElementsByTagName("Photogroup") 
 
     coord_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=100, origin=[0., 0., 0.])
@@ -122,6 +122,7 @@ def read_xml(input_xml):
     results = {}
     photo_results = {}
     photogroup = doc.getElementsByTagName("Photogroup")
+    # pdb.set_trace()
 
     for g_id in range(len(photogroup)):
         all_poses = photos[g_id]
@@ -144,9 +145,14 @@ def read_xml(input_xml):
         for photo in tqdm(photo_subgroup):
 
             id = int(photo.getElementsByTagName('Id')[0].firstChild.data)
-            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')[1:]
+            # import pdb;pdb.set_trace()
+            path=photo.getElementsByTagName('ImagePath')[0].firstChild.data
+            # path=photo.getElementsByTagName('ImagePath')[0].firstChild.data.split('/')
             # path = path[0] + '/' + path[1] + '/' + path[2]
-            path = os.path.join(*path)
+            # path = os.path.join(*path)
+            
+            if not os.path.exists(os.path.join(input_path,"images",path)):
+                continue
 
             folder = path[:1]
 

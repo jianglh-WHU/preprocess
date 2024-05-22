@@ -7,14 +7,12 @@ from pyproj import CRS
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="convert cc xml to transforms.json for nerfstudio")
+        description="convert inphoprj xml to transforms.json for nerfstudio")
 
     parser.add_argument("--input_path",
                         type=str,
                         default='.')
-    parser.add_argument("--input_transforms",
-                        type=str,
-                        default='71_6.json')
+
     parser.add_argument("--input_prj",
                         type=str,
                         required=True,
@@ -23,21 +21,8 @@ def parse_args():
     parser.add_argument("--output_transforms",
                         type=str,
                         default='xuhui.json')
-    
-    parser.add_argument("--same_intri",action='store_true', default=False)
 
     parser.add_argument("--downsample", type=int, default=1)
-    
-    parser.add_argument("--orientation_method", type=str, default='none',
-                        choices=["pca", "up", "vertical", "none"],
-                        help='The method to use for orientation')
-    
-    parser.add_argument("--center_method", type=str, default='poses',
-                        choices=["poses", "focus", "none"],
-                        help='The method to use to center the poses')
-
-    parser.add_argument("--auto_scale_poses", action='store_false', default=False)
-    
     
     args = parser.parse_args()
     return args

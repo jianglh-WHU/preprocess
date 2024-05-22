@@ -1,11 +1,9 @@
 __pycache__/*
 .vscode
 data/*
-scripts/indoor*
-scripts/run.sh
+scripts/*
 
 *.xml
 *.json
 *.las
-resize.py
-scripts/*
+

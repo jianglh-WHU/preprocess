@@ -2,7 +2,9 @@ import argparse
 import csv
 import os
 import json
+import pdb
 from PIL import Image
+import cv2
 import numpy as np
 # from pathlib import Path
 from tqdm import tqdm
@@ -20,13 +22,14 @@ def parse_args():
     parser.add_argument("--images_path",
                         type=str,
                         default=None)
-    parser.add_argument("--input_transforms",
-                        type=str,
-                        default='71_6.json')
     parser.add_argument("--input_csv",
                         type=str,
                         required=True,
                         default='shizi.xml')
+    
+    parser.add_argument("--file_name",
+                        type=str,
+                        default='transforms.json')
     
     parser.add_argument("--output_transforms",
                         type=str,
@@ -163,9 +166,11 @@ def read_rc_csv(csv_filename, output_dir, args, downsample=1):
     processed_img = False if in_img_list==None else True
     if not processed_img:
         if RAW == False:
-            image_filename_map = os.listdir(os.path.join(output_dir, 'images_cp'))
+            image_filename_map = os.listdir(os.path.join(output_dir, 'images', args.images_path))
         else:
-            image_filename_map = os.listdir(os.path.join(output_dir, 'images_cp'))
+            image_filename_map = os.listdir(os.path.join(output_dir, 'images'))
+    
+    # import pdb;pdb.set_trace()
     for i, name in tqdm(enumerate(cameras["#name"]), desc="Processing"):
         # basename = name.rpartition(".")[0]
         basename = name
@@ -175,7 +180,8 @@ def read_rc_csv(csv_filename, output_dir, args, downsample=1):
                 missing_image_data += 1
                 continue
             if RAW == False:
-                img = np.array(Image.open(os.path.join(output_dir, 'images_cp', basename)))
+                # img = np.array(Image.open(os.path.join(output_dir, 'images', args.images_path, basename)))
+                img = cv2.imread(os.path.join(output_dir, 'images', args.images_path, basename))
             else:
                 img = np.array(Image.open(os.path.join(output_dir, 'images_cp', basename)))
         else:
@@ -204,9 +210,9 @@ def read_rc_csv(csv_filename, output_dir, args, downsample=1):
         frame["w"] = int(width / downsample)
         if not processed_img:
             if RAW == None:
-                file_path = os.path.join('images_cp', basename) if downsample==1 else os.path.join(f'images_cp_{downsample}', basename)
+                file_path = os.path.join('images', args.images_path, basename) if downsample==1 else os.path.join(f'images_{downsample}',args.images_path, basename)
             else:
-                file_path = os.path.join('images_cp', basename) if downsample==1 else os.path.join(f'images_cp_{downsample}', basename)
+                file_path = os.path.join('images', args.images_path, basename) if downsample==1 else os.path.join(f'images_{downsample}',args.images_path, basename)
         else:
             file_path = os.path.join(output_dir, img_path,'images', "rgb", basename) if downsample==1 else os.path.join(output_dir, img_path, f'images_{downsample}', "rgb", basename)
         frame['file_path'] = file_path
@@ -235,6 +241,9 @@ def read_rc_csv(csv_filename, output_dir, args, downsample=1):
 
         frame["transform_matrix"] = transform.tolist()
         frames.append(frame)
+        
+        # if i>5:
+        #     break
     data["frames"] = frames
 
     return data
@@ -245,13 +254,14 @@ if __name__ == "__main__":
     INPUT_PATH=args.input_path
     INPUT_CSV = os.path.join(INPUT_PATH, args.input_csv)
     OUTPUT_PATH = INPUT_PATH if args.output_path == None else args.output_path
-    IMAGES_PATH = OUTPUT_PATH if args.images_path == None else args.images_path
+    # IMAGES_PATH = OUTPUT_PATH if args.images_path == None else args.images_path
     DOWNSAMPLE = args.downsample
     output_name = args.output_transforms
     # import pdb;pdb.set_trace()
     
-    results = read_rc_csv(INPUT_CSV, IMAGES_PATH, args, DOWNSAMPLE)
-    file_name = "transforms.json" if DOWNSAMPLE == 1 else f"transforms_{DOWNSAMPLE}.json"
+    results = read_rc_csv(INPUT_CSV, OUTPUT_PATH, args, DOWNSAMPLE)
+    # file_name = "transforms.json" if DOWNSAMPLE == 1 else f"transforms_{DOWNSAMPLE}.json"
+    file_name = args.file_name
     file_name = file_name if output_name == None else output_name
     with open(os.path.join(OUTPUT_PATH , file_name), "w", encoding="utf-8") as f:
         json.dump(results, f, indent=4)

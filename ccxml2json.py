@@ -23,7 +23,7 @@ def parse_args():
     parser.add_argument("--input_xml",
                         type=str,
                         required=True,
-                        default='shizi.xml')
+                        default='Block_1_sby.xml')
     
     parser.add_argument("--output_transforms",
                         type=str,
@@ -39,7 +39,7 @@ def parse_args():
                         choices=["pca", "up", "vertical", "none"],
                         help='The method to use for orientation')
     
-    parser.add_argument("--center_method", type=str, default='poses',
+    parser.add_argument("--center_method", type=str, default='none',
                         choices=["poses", "focus", "none"],
                         help='The method to use to center the poses')
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     OUTPUT_PATH = INPUT_PATH
     DOWNSAMPLE = args.downsample
     TRAIN_SKIP = args.train_skip
-    results = read_xml(input_xml=os.path.join(INPUT_PATH,INPUT_XML))
+    results = read_xml(input_xml=os.path.join(INPUT_PATH,INPUT_XML),input_path=INPUT_PATH)
     tj = results['photo_results']
 
     # with open(os.path.join(INPUT_PATH,f"{args.input_transforms}"), "r") as f:
@@ -214,7 +214,7 @@ if __name__ == "__main__":
         scale_factor = 1.0
         if args.auto_scale_poses:
             scale_factor /= float(torch.max(torch.abs(poses[:, :3, 3]))) 
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         print('scale factor:', scale_factor)
         poses[:, :3, 3] *= scale_factor
         

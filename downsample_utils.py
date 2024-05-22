@@ -45,6 +45,13 @@ def get_tasks_xml(input_path, input_xml, downsample, args):
             depth_tasks.append((depth_path,w,h,downsample))
     return tasks, depth_tasks
 
+def get_ds_path(file_path, downsample):
+    index = file_path.find('images/')
+    img_name = file_path[index+len('images/'):]
+    input_path = file_path[:index]
+    ds_file_path = img_path=os.path.join(input_path, f'images_{downsample}',img_name)
+    return ds_file_path
+
 def get_tasks_json(input_path, downsample, args):
     json_path = input_path if args.json_path is None else args.json_path
     with open(os.path.join(json_path, f"{args.input_transforms}"), "r") as f:
@@ -63,14 +70,24 @@ def get_tasks_json(input_path, downsample, args):
             else:
                 if 'images' in frame['file_path']:
                     file_path = os.path.join(input_path,frame['file_path'])
+                    ds_file_path = get_ds_path(file_path,downsample)
                 else:
                     file_path = os.path.join(input_path,'images',frame['file_path'])
-            try:
-                # if already have been ds 
+                    ds_file_path = get_ds_path(file_path,downsample)
+            # import pdb;pdb.set_trace()
+            
+            try: 
                 Image.open(file_path)
             except:
                 continue
-            tasks.append((file_path,w,h,downsample))
+            
+            try:
+                # if already have been ds 
+                Image.open(ds_file_path)
+                continue
+            except:
+            
+                tasks.append((file_path,w,h,downsample))
             
         if args.is_depth:
             if 'images' in frame['file_path']:
@@ -83,7 +100,7 @@ def get_tasks_json(input_path, downsample, args):
             if not os.path.exists(depth_path):
                 continue
             depth_tasks.append((depth_path,w,h,downsample))
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
    
     return tasks, depth_tasks
 

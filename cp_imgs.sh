@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 设置源文件夹路径和目标文件夹路径
-source_dir="data/huanghelu_4parts/images"
-destination_dir="data/huanghelu_4parts/images_cp"
+source_dir="data/yinxinggushu_spring/Block_2-AT/undistorted_image/"
+destination_dir="data/yinxinggushu_spring/images"
 
 # 创建目标文件夹
 mkdir -p "$destination_dir"
